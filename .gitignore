@@ -1,3 +1,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+photos
+blur_del/static/media/ann_blr
+blur_del/static/media/blur
+api_drf/saved_model
