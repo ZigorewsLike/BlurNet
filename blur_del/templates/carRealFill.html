@@ -26,7 +26,7 @@
             <div class="row">
                 <div class="col-md-4 itemnav"><a href="/">HOME </a></div>
                 <div class="itemnav col-md-4"><a href="#">BlurNet </a></div>
-                <div class="itemnav col-md-4"><a href="/ann_carFill">CarRealFill </a></div>
+                <div class="itemnav col-md-4"><a href="/admin/">CarRealFill </a></div>
                 <!-- <div class="itemnav"><a href="about.html">ABOUT US</a></div> -->
             </div>
         </center>
@@ -67,21 +67,17 @@
                     <div class="imageContainer row">
                         <div class="col-md-1"></div>
                         <div class="col-md-3 block">
-                            <center><b>Blured</b></center>
+                            <center><b>Original</b></center>
                             <!-- <img :src="base64Img.src" class="img" alt="" srcset="" width="256px"> -->
-                            <div :style="imgDir" class="img"></div>
-                            <input type="file" v-on:change="uploadImage">
+                            <div class="img cnv">
+                                <canvas id="drawCanvas" width="256" height="256"></canvas>
+                                <input type="radio" name="action" value="draw" checked> draw
+                                <input type="radio" name="action" value="erase" id="erase"> erase
+                            </div>
                         </div>
                         <center class="col-md-4">
-                            <template v-if="uploaded">
-                                <input type="button" value="Convert" v-on:click="submitdata('blurAnn')"><br>
-                                <input type="button" value="Convert and download" v-on:click="submitdata('blurAnn', true)">
-                            </template>
-                            <template v-else>
-                                <div style="color:rgb(150, 99, 99)">Загрузите своё изображение</div>
-                                <input type="button" value="Convert" disabled><br>
-                                <input type="button" value="Convert and download" disabled>
-                            </template>
+                            <input type="button" value="Convert" v-on:click="submitdata('canvas')"><br>
+                            <input type="button" value="Convert and download" v-on:click="submitdata('blurAnn', true)">
                             <div v-if="blur_proc" class="preload">
                                 <img width="40px" src="static/source/preloader.svg">
                             </div>
@@ -90,7 +86,7 @@
                             </div>
                         </center>
                         <div class="col-md-3">
-                            <center><b>Prediction</b></center>
+                            <center><b>Blured</b></center>
                             <!-- <img :src="base64Img.src" class="img" alt="new_img" width="256px" :style="new_img">  -->
                             <div :style="new_img" class="img"></div>
                         </div>
@@ -110,5 +106,44 @@
     </div>
     
     <script src="static/app.js"></script>
+
+    <script>
+        var c = createjs, stage, art;
+        var x, y, listener, color;
+
+        stage = new c.Stage("drawCanvas");
+        art = stage.addChild(new c.Shape());
+        art.cache(0,0,600,400);
+
+        stage.on("stagemousedown", startDraw, this);
+
+        function startDraw(evt) {
+            listener = stage.on("stagemousemove", draw, this);
+            stage.on("stagemouseup", endDraw, this);
+            color = c.Graphics.getRGB(0, 0, 0);
+            x = evt.stageX-0.001; // offset so we draw an initial dot
+            y = evt.stageY-0.001;
+            draw(evt); // draw the initial dot
+        }
+
+        function draw(evt) {
+            art.graphics.ss(2,10).s(color).mt(x,y).lt(evt.stageX, evt.stageY);
+            
+            // the composite operation is the secret sauce.
+            // we'll either draw or erase what the user drew.
+            art.updateCache(erase.checked ? "destination-out" : "source-over");
+            
+            art.graphics.clear();
+            x = evt.stageX;
+            y = evt.stageY;
+            stage.update();
+        }
+
+        function endDraw(evt) {
+            stage.off("stagemousemove", listener);
+            evt.remove();
+        }
+    </script>
+
 </body>
 </html>

@@ -26,7 +26,7 @@
             <div class="row">
                 <div class="col-md-4 itemnav"><a href="#">HOME </a></div>
                 <div class="itemnav col-md-4"><a href="/ann_blurNet">BlurNet </a></div>
-                <div class="itemnav col-md-4"><a href="/admin/">CarRealFill </a></div>
+                <div class="itemnav col-md-4"><a href="/ann_carFill">CarRealFill </a></div>
                 <!-- <div class="itemnav"><a href="about.html">ABOUT US</a></div> -->
             </div>
         </center>
@@ -91,7 +91,7 @@
                              <div v-else style="color: white;"><br></div>
                             <br>
                             <template v-if="uploaded">
-                                <input type="button" value="Download" v-on:click="submitdata('blurImg')">
+                                <input type="button" value="Download" v-on:click="submitdata('blurImg', true)">
                             </template>
                             <template v-else>
                                 <div style="color:rgb(253, 120, 120)">Загрузите своё изображение</div>

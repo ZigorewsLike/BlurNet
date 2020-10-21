@@ -42,11 +42,18 @@ new Vue({
             console.log(this.base64Img)
             this.uploaded = true;
         },
-        async submitdata(api_name){
+        async submitdata(api_name, download = false){
+            if (api_name == "canvas"){
+                this.selctedFile = new Image();
+                var canvas = document.getElementById("drawCanvas");
+                this.selctedFile = canvas.toDataURL("image/png").replace(/^data:image\/(png|jpg);base64,/, "");
+                //canvas.toDataURL("image/png").replace(/^data:image\/(png|jpg);base64,/, "");
+                api_name == "blurAnn";
+            }
             this.blur_proc = true;
             var pojiloygibon267 = Cookies.get('csrftoken');
             console.log(pojiloygibon267);
-            try{
+            //try{
                 var fd = new FormData();
                 fd.append('keysession', this.keysession);
                 fd.append('img', this.selctedFile);
@@ -54,7 +61,7 @@ new Vue({
                 fd.append('blurInt', this.blur_value);
                 fd.append('outputPath', '0');
             
-            
+                console.log(this.selctedFile);
                 var opt_post = false;
                 await axios({
                     method : "post",
@@ -80,7 +87,16 @@ new Vue({
                             if (data[el].keysession == this.keysession && data[el].blurInt == this.blur_value && data[el].title == this.selctedFile.name){
                                 //console.log(data[el].outputPath)
                                 this.new_img.backgroundImage = 'url(' + data[el].outputPath + ')';
-                                this.blur_img = (data[el].outputPath).substring(19);
+                                var shift = 0
+                                switch(api_name){
+                                    case 'blurImg':
+                                        shift = 19;
+                                        break;
+                                    case 'blurAnn':
+                                        shift = 22;
+                                        break;
+                                }
+                                this.blur_img = (data[el].outputPath).substring(shift);
                                 console.log('img = ', this.blur_img);
                                 break;
                             }
@@ -90,12 +106,23 @@ new Vue({
                         this.blur_proc = false;
                     }); 
                 }
-                window.open('/blur'+this.blur_img, "_blank")
+                if (download){
+                    var domain = ''
+                    switch(api_name){
+                        case 'blurImg':
+                            domain = '/downloadBlur';
+                            break;
+                        case 'blurAnn':
+                            domain = '/downloadAnnBlur';
+                            break;
+                    }
+                    window.open(domain+this.blur_img, "_blank")
+                }
                 this.blur_proc = false;
-            }catch(error){
+            //}catch(error){
                 alert("Не удолось сформировать изображение");
                 this.blur_proc = false;
-            }
+            //}
 
         },
         
