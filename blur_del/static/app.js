@@ -43,12 +43,47 @@ new Vue({
             this.uploaded = true;
         },
         async submitdata(api_name, download = false){
+            function dataURItoBlob(dataURL) {
+                // convert base64/URLEncoded data component to raw binary data held in a string
+                var BASE64_MARKER = ';base64,';
+                if (dataURL.indexOf(BASE64_MARKER) == -1) {
+                    var parts = dataURL.split(',');
+                    var contentType = parts[0].split(':')[1];
+                    var raw = decodeURIComponent(parts[1]);
+                    return new Blob([raw], {type: contentType});
+                }
+                var parts = dataURL.split(BASE64_MARKER);
+                var contentType = parts[0].split(':')[1];
+                var raw = window.atob(parts[1]);
+                var rawLength = raw.length;
+                var uInt8Array = new Uint8Array(rawLength);
+                for (var i = 0; i < rawLength; ++i) {
+                    uInt8Array[i] = raw.charCodeAt(i);
+                }
+                return new Blob([uInt8Array], {type: contentType});
+            }
+            function blobToFile(theBlob, fileName){
+                theBlob.lastModifiedDate = new Date();
+                theBlob.name = fileName;
+                return theBlob;
+            }
             if (api_name == "canvas"){
-                this.selctedFile = new Image();
                 var canvas = document.getElementById("drawCanvas");
-                this.selctedFile = canvas.toDataURL("image/png").replace(/^data:image\/(png|jpg);base64,/, "");
+                //this.selctedFile = canvas.toDataURL("image/png").replace(/^data:image\/(png|jpg);base64,/, "");
                 //canvas.toDataURL("image/png").replace(/^data:image\/(png|jpg);base64,/, "");
-                api_name == "blurAnn";
+                var file = dataURItoBlob(canvas.toDataURL("image/jpeg"));
+                file.lastModified = "1602226354201";
+                file.lastModifiedDate = new Date();
+                // file.name = "lol";
+                // file.type = "image/jpeg"
+                
+                api_name = "blurImg";
+                console.log(file);
+                file = blobToFile(file, 'canvas.jpg');
+                file = new File([file], 'canvas.jpg')
+                console.log();
+                this.selctedFile = file;
+
             }
             this.blur_proc = true;
             var pojiloygibon267 = Cookies.get('csrftoken');
@@ -62,6 +97,7 @@ new Vue({
                 fd.append('outputPath', '0');
             
                 console.log(this.selctedFile);
+                console.log(fd)
                 var opt_post = false;
                 await axios({
                     method : "post",

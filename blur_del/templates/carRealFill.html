@@ -111,9 +111,13 @@
         var c = createjs, stage, art;
         var x, y, listener, color;
 
+        var rec = new c.Shape();
+        rec.graphics.beginFill("white").drawRoundRect(0, 0, 256, 256, 0);
+
         stage = new c.Stage("drawCanvas");
+        stage.addChild(rec);
         art = stage.addChild(new c.Shape());
-        art.cache(0,0,600,400);
+        art.cache(0,0,256,256);
 
         stage.on("stagemousedown", startDraw, this);
 
