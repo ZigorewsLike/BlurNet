@@ -88,7 +88,7 @@ new Vue({
             this.blur_proc = true;
             var pojiloygibon267 = Cookies.get('csrftoken');
             console.log(pojiloygibon267);
-            //try{
+            try{
                 var fd = new FormData();
                 fd.append('keysession', this.keysession);
                 fd.append('img', this.selctedFile);
@@ -155,10 +155,11 @@ new Vue({
                     window.open(domain+this.blur_img, "_blank")
                 }
                 this.blur_proc = false;
-            //}catch(error){
+            }catch(error){
                 alert("Не удолось сформировать изображение");
+                console.log(error);
                 this.blur_proc = false;
-            //}
+            }
 
         },
         
