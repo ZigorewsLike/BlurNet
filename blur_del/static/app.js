@@ -77,10 +77,10 @@ new Vue({
                 // file.name = "lol";
                 // file.type = "image/jpeg"
                 
-                api_name = "blurImg";
+                api_name = "blurAnn";
                 console.log(file);
-                file = blobToFile(file, 'canvas.jpg');
-                file = new File([file], 'canvas.jpg')
+                file = blobToFile(file, 'brnann_ccr_nf_2288667.jpg');
+                file = new File([file], 'brnann_ccr_nf_2288667.jpg')
                 console.log();
                 this.selctedFile = file;
 

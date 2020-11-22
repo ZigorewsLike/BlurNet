@@ -151,7 +151,10 @@ def imagBlurAnn(file, title, key, img):
     discriminator_optimizer = tf.keras.optimizers.Adam(2e-4, beta_1=0.5)
 
     print('Load model')
-    checkpoint_dir = 'api_drf/saved_model_blur'
+    if title == "brnann_ccr_nf_2288667.jpg":
+        checkpoint_dir = 'api_drf/saved_model_car'
+    else:
+        checkpoint_dir = 'api_drf/saved_model_blur'
     print('Path model exist -', os.path.exists(checkpoint_dir), os.getcwd())
     checkpoint = tf.train.Checkpoint(generator_optimizer=generator_optimizer,
                                      discriminator_optimizer=discriminator_optimizer,
