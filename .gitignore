@@ -8,3 +8,4 @@ api_drf/saved_model_blur
 api_drf/saved_model_car
 api_drf/saved_model_edge
 *.psd
+download
