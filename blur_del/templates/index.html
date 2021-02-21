@@ -15,22 +15,22 @@
         <center class="container">
             <div class="row">
                 <div class="col-md-4 itemnav"><a href="#">HOME </a></div>
+                <div class="itemnav col-md-4"><a href="/ann_blurNet">NoJpeg </a></div>
                 <div class="itemnav col-md-4"><a href="/api/">API </a></div>
-                <div class="itemnav col-md-4"><a href="/admin/">ADMIN </a></div>
                 <!-- <div class="itemnav"><a href="about.html">ABOUT US</a></div> -->
             </div>
         </center>
     </div>
-    <div class="navpanel">
-        <center class="container">
-            <div class="row">
-                <div class="col-md-4 itemnav"><a href="#">HOME </a></div>
-                <div class="itemnav col-md-4"><a href="/ann_blurNet">BlurNet </a></div>
-                <div class="itemnav col-md-4"><a href="/ann_carFill">CarRealFill </a></div>
-                <!-- <div class="itemnav"><a href="about.html">ABOUT US</a></div> -->
-            </div>
-        </center>
-    </div>
+<!--    <div class="navpanel">-->
+<!--        <center class="container">-->
+<!--            <div class="row">-->
+<!--                <div class="col-md-4 itemnav"><a href="#">HOME </a></div>-->
+<!--                <div class="itemnav col-md-4"><a href="/">BlurNet </a></div>-->
+<!--                <div class="itemnav col-md-4"><a href="/ann_carFill">CarRealFill </a></div>-->
+<!--                &lt;!&ndash; <div class="itemnav"><a href="about.html">ABOUT US</a></div> &ndash;&gt;-->
+<!--            </div>-->
+<!--        </center>-->
+<!--    </div>-->
     
 </head>
 <body onload="init();">
@@ -38,23 +38,28 @@
             {% verbatim %}
             <div id="app">
                 <center><img src="static/source/pepeTolet.gif" width=40px> {{message}} <img src="static/source/pepeTolet.gif" width=40px></center>
-                <h1>Welcome to the club buddy</h1>
-                <center>
-                    <img src="https://media1.tenor.com/images/f09be3b8863a9e51fd57b0ed62446670/tenor.gif?itemid=16643606" alt="" width="300px">
-                </center>
-                
-                <h1>О "BlurNet"</h1>
+                <h1>BlurNet</h1>
+<!--                <center>-->
+<!--                    <img src="https://media1.tenor.com/images/f09be3b8863a9e51fd57b0ed62446670/tenor.gif?itemid=16643606" alt="" width="300px">-->
+<!--                </center>-->
+                 <div class=" text-right justify-content-center align-self-center">
+                        BlurNet - Это проект объединяющий бэкенд Django и библиотеки tensorflow 2.4.0.
+                     Таким образом можно обрабатывать изображения с использованием нейронных сетей, посылая изображения через запросы.
+                     На данный момент работает одна нейронная сеть: NoJpeg.
+
+                    </div>
+                <h2>О "NoJpeg"</h2>
                 <div class="about row d-flex">
                     <div class="col-md-6 text-right justify-content-center align-self-center">
-                        BlurNet - это обученная на востановление размытого изображения нейронная сеть. 
-                        Она сможет восстановить размытое изображение и добавить к нему деталей.
-                        Особенность этой сети в том, что она обучена на изображениях природы, птиц и т.д. 
+                        BlurNet - это обученная на востановление сжатого изображения, которое сохранили в плохом качестве формата JPEG.
+                        Она сможет восстановить изображение и добавить к нему деталей.
+                        Особенность этой сети в том, что она обучена на изображениях природы, птиц и т.д.
                         Таким образом нейронная сеть сможет понять как устроен тот или иной объект на фотографии и дополнить его иходя из прошлых изображений этого же объекта, например дорисовать иголке сосне.
 
                     </div>
                     <div class="col-md-1"></div>
                     <div class="col-md-5">
-                        <img src="static/source/img1_1.png" width="400px">
+                        <img src="static/source/img1_2.png" width="400px">
                     </div>
                     
                 </div>
@@ -62,16 +67,16 @@
                 <!-- <canvas id="drawCanvas" width="600" height="400s"></canvas>
                 <input type="radio" name="action" value="draw" checked> draw
                 <input type="radio" name="action" value="erase" id="erase"> erase -->
-                <h2>Примеры работы нейронной сети</h2>
-                <div class="row">
-                    <div class="col-md-12 slider-cont">
-                        <img src="static/source/exmpl1.jpg" alt="" height="256px" class="slider-img1">
-                        <img src="static/source/exmpl2.jpg" alt="" height="256px" class="slider-img2">
-                        <img src="static/source/exmpl1.jpg" alt="" height="256px" class="slider-img1">
-                        <img src="static/source/exmpl2.jpg" alt="" height="256px" class="slider-img2">
-                    </div>
-                </div>
-                <hr>
+<!--                <h2>Примеры работы нейронной сети</h2>-->
+<!--                <div class="row">-->
+<!--                    <div class="col-md-12 slider-cont">-->
+<!--                        <img src="static/source/exmpl1.jpg" alt="" height="256px" class="slider-img1">-->
+<!--                        <img src="static/source/exmpl2.jpg" alt="" height="256px" class="slider-img2">-->
+<!--                        <img src="static/source/exmpl1.jpg" alt="" height="256px" class="slider-img1">-->
+<!--                        <img src="static/source/exmpl2.jpg" alt="" height="256px" class="slider-img2">-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <hr>-->
                 <h2>Обработка изображений</h2>
                 <!-- На случай если у вас нет размытого изображения для тестирования нейронной сети, можно обработать любое загруженное изображение прям тут. -->
                 <div class="paneltool">

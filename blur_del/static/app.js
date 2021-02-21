@@ -13,7 +13,7 @@ new Vue({
             selctedFile: null,
             base64Img: new Image(),
             imgDir:{
-                backgroundImage: "url(static/source/1.jpg)",
+                backgroundImage: "url(static/source/1_bd.jpg)",
             },
             keysession: 0,
             blur_proc: false,

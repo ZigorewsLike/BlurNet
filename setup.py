@@ -43,8 +43,9 @@ except IndexError:
 
 dir_list = ['photos', 'blur_del/static/media', 'blur_del/static/media/ann_blr', 'blur_del/static/media/blur',
             'api_drf/saved_model_blur', 'api_drf/saved_model_car', 'photos/local', 'download']
-wget_list = {'1pEhHEqoTQ-DNWq3_haUKpFxcQbwi7Fa3': 'saved_model_blur.zip',
-             '1-HcVDTOtLh85va4No4raKzz0buSsgrL_': 'saved_model_car.zip'}
+# wget_list = {'1pEhHEqoTQ-DNWq3_haUKpFxcQbwi7Fa3': 'saved_model_blur.zip',
+# '1-HcVDTOtLh85va4No4raKzz0buSsgrL_': 'saved_model_car.zip'}
+wget_list = {'11BAlo0WGYfzWeVRgdmm5WH574octhTD6': 'saved_model_jpeg.zip'}
 
 if _mode == 1:
     for folder in dir_list:
@@ -54,6 +55,8 @@ if _mode == 1:
         except FileExistsError:
             print('ok')
 elif _mode == 2:
+    c = 0
+    print(c, '%')
     for wget_item in wget_list:
         download_file_from_google_drive(wget_item, 'download/' + wget_list[wget_item])
         with ZipFile('download/' + wget_list[wget_item], 'r') as zip_obj:

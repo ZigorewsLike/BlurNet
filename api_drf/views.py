@@ -5,7 +5,6 @@ from rest_framework.parsers import MultiPartParser, FormParser
 
 from PIL import Image, ImageFilter
 
-# Вся херя со всей хернёй
 import tensorflow as tf
 import numpy as np
 from tensorflow.keras.models import load_model
@@ -14,99 +13,14 @@ import time
 from matplotlib import pyplot as plt
 
 # from IPython import display
-OUTPUT_CHANNELS = 3
-LAMBDA = 100
+IMAGE_SHAPE = 512
 
 
-def downsample(filters, size, apply_batchnorm=True):
-    initializer = tf.random_normal_initializer(0., 0.02)
-    result = tf.keras.Sequential()
-    result.add(
-        tf.keras.layers.Conv2D(filters, size, strides=2, padding='same',
-                               kernel_initializer=initializer, use_bias=False))
-    if apply_batchnorm:
-        result.add(tf.keras.layers.BatchNormalization())
-    result.add(tf.keras.layers.LeakyReLU())
-    return result
-
-
-def upsample(filters, size, apply_dropout=False):
-    initializer = tf.random_normal_initializer(0., 0.02)
-    result = tf.keras.Sequential()
-    result.add(
-        tf.keras.layers.Conv2DTranspose(filters, size, strides=2,
-                                        padding='same',
-                                        kernel_initializer=initializer,
-                                        use_bias=False))
-    result.add(tf.keras.layers.BatchNormalization())
-    if apply_dropout:
-        result.add(tf.keras.layers.Dropout(0.5))
-    result.add(tf.keras.layers.ReLU())
-    return result
-
-
-def Generator():
-    inputs = tf.keras.layers.Input(shape=[256, 256, 3])
-    down_stack = [
-        downsample(64, 4, apply_batchnorm=False),  # (bs, 128, 128, 64)
-        downsample(128, 4),  # (bs, 64, 64, 128)
-        downsample(256, 4),  # (bs, 32, 32, 256)
-        downsample(512, 4),  # (bs, 16, 16, 512)
-        downsample(512, 4),  # (bs, 8, 8, 512)
-        downsample(512, 4),  # (bs, 4, 4, 512)
-        downsample(512, 4),  # (bs, 2, 2, 512)
-        downsample(512, 4),  # (bs, 1, 1, 512)
-    ]
-    up_stack = [
-        upsample(512, 4, apply_dropout=True),  # (bs, 2, 2, 1024)
-        upsample(512, 4, apply_dropout=True),  # (bs, 4, 4, 1024)
-        upsample(512, 4, apply_dropout=True),  # (bs, 8, 8, 1024)
-        upsample(512, 4),  # (bs, 16, 16, 1024)
-        upsample(256, 4),  # (bs, 32, 32, 512)
-        upsample(128, 4),  # (bs, 64, 64, 256)
-        upsample(64, 4),  # (bs, 128, 128, 128)
-    ]
-    initializer = tf.random_normal_initializer(0., 0.02)
-    last = tf.keras.layers.Conv2DTranspose(OUTPUT_CHANNELS, 4,
-                                           strides=2,
-                                           padding='same',
-                                           kernel_initializer=initializer,
-                                           activation='tanh')  # (bs, 256, 256, 3)
-    x = inputs
-
-    # Downsampling through the model
-    skips = []
-    for down in down_stack:
-        x = down(x)
-        skips.append(x)
-    skips = reversed(skips[:-1])
-
-    # Upsampling and establishing the skip connections
-    for up, skip in zip(up_stack, skips):
-        x = up(x)
-        x = tf.keras.layers.Concatenate()([x, skip])
-    x = last(x)
-    return tf.keras.Model(inputs=inputs, outputs=x)
-
-
-def Discriminator():
-    initializer = tf.random_normal_initializer(0., 0.02)
-    inp = tf.keras.layers.Input(shape=[256, 256, 3], name='input_image')
-    tar = tf.keras.layers.Input(shape=[256, 256, 3], name='target_image')
-    x = tf.keras.layers.concatenate([inp, tar])  # (bs, 256, 256, channels*2)
-    down1 = downsample(64, 4, False)(x)  # (bs, 128, 128, 64)
-    down2 = downsample(128, 4)(down1)  # (bs, 64, 64, 128)
-    down3 = downsample(256, 4)(down2)  # (bs, 32, 32, 256)
-    zero_pad1 = tf.keras.layers.ZeroPadding2D()(down3)  # (bs, 34, 34, 256)
-    conv = tf.keras.layers.Conv2D(512, 4, strides=1,
-                                  kernel_initializer=initializer,
-                                  use_bias=False)(zero_pad1)  # (bs, 31, 31, 512)
-    batchnorm1 = tf.keras.layers.BatchNormalization()(conv)
-    leaky_relu = tf.keras.layers.LeakyReLU()(batchnorm1)
-    zero_pad2 = tf.keras.layers.ZeroPadding2D()(leaky_relu)  # (bs, 33, 33, 512)
-    last = tf.keras.layers.Conv2D(1, 4, strides=1,
-                                  kernel_initializer=initializer)(zero_pad2)  # (bs, 30, 30, 1)
-    return tf.keras.Model(inputs=[inp, tar], outputs=last)
+def calcSize(width, height):
+    r = width/height
+    if width > height:
+        return IMAGE_SHAPE, int(IMAGE_SHAPE/r)
+    return int(IMAGE_SHAPE*r), IMAGE_SHAPE
 
 
 def load_img(image_file):
@@ -114,9 +28,9 @@ def load_img(image_file):
     image = tf.image.decode_jpeg(image)
 
     input_image = tf.cast(image, tf.float32)
-    input_image = tf.image.resize(input_image, [256, 256], method=tf.image.ResizeMethod.NEAREST_NEIGHBOR)
+    input_image = tf.image.resize(input_image, [IMAGE_SHAPE, IMAGE_SHAPE], method=tf.image.ResizeMethod.NEAREST_NEIGHBOR)
     input_image = (input_image / 127.5) - 1
-    input_image = tf.reshape(input_image, [1, 256, 256, 3])
+    input_image = tf.reshape(input_image, [1, IMAGE_SHAPE, IMAGE_SHAPE, 3])
     print(input_image)
     return input_image
 
@@ -124,6 +38,7 @@ def load_img(image_file):
 def imagBlur(file, blur, key, img):
     img = Image.open(img)
     width, height = img.size
+    os.remove(os.path.join(os.path.dirname(os.path.dirname(__file__)), str(file.img)))
     if width >= height:
         ratio = (256 / float(img.size[0]))
         height = int((float(img.size[1]) * float(ratio)))
@@ -139,44 +54,38 @@ def imagBlur(file, blur, key, img):
     qqueryset.update(outputPath='/static/media/blur/' + key + str(file.img)[7:])
 
 
-def imagBlurAnn(file, title, key, img):
-    img = Image.open(img)
-    img = img.resize((256, 256))
-    img.save('photos/local/img.jpg')
-    print('Setup model')
-    generator = Generator()
-    discriminator = Discriminator()
-
-    generator_optimizer = tf.keras.optimizers.Adam(2e-4, beta_1=0.5)
-    discriminator_optimizer = tf.keras.optimizers.Adam(2e-4, beta_1=0.5)
+def imagBlurAnn(file, title, key, img_path):
+    img = Image.open(img_path)
+    img = img.resize(calcSize(img.size[0], img.size[1]))
+    n_img = Image.new(mode="RGB", size=(IMAGE_SHAPE, IMAGE_SHAPE))
+    shift_x, shift_y = int((IMAGE_SHAPE - img.size[0])/2), int((IMAGE_SHAPE - img.size[1])/2)
+    n_img.paste(img, (shift_x, shift_y, img.size[0]+shift_x, img.size[1]+shift_y))
+    n_img.save('photos/local/img.jpg')
+    print(file.img)
+    os.remove(os.path.join(os.path.dirname(os.path.dirname(__file__)), str(file.img)))
 
     print('Load model')
     if title == "brnann_ccr_nf_2288667.jpg":
-        checkpoint_dir = 'api_drf/saved_model_car'
+        checkpoint_dir = 'api_drf/saved_model_car/'
     else:
-        checkpoint_dir = 'api_drf/saved_model_blur'
+        checkpoint_dir = 'api_drf/saved_model_blur/'
+    with open(os.path.join('api_drf/', 'model.name'), 'r') as f:
+        checkpoint_dir += f.readline()
+        print("DIR  ===== ", checkpoint_dir)
     print('Path model exist -', os.path.exists(checkpoint_dir), os.getcwd())
-    checkpoint = tf.train.Checkpoint(generator_optimizer=generator_optimizer,
-                                     discriminator_optimizer=discriminator_optimizer,
-                                     generator=generator,
-                                     discriminator=discriminator)
-    checkpoint.restore(tf.train.latest_checkpoint(checkpoint_dir))
+    model = load_model(checkpoint_dir, compile=False)
     print('Model predict')
     image = load_img('photos/local/img.jpg')
-    print(generator.summary())
-    prediction = generator(image, training=True)
+    prediction = model(image, training=True)
     print(prediction)
     print('Model end predict')
-    # plt.imshow(prediction.numpy()[0], cmap='gray')
-    # plt.show()
-    # prediction = tf.image.encode_jpeg(prediction, quality=100, format="rgb")
     n_predict = (prediction.numpy()[0] + 1) * 127.5
     n_predict = n_predict.astype(np.uint8)
     print(n_predict)
     img = Image.fromarray(n_predict)
-    img.save('./blur_del/static/media/ann_blr/' + key + str(file.img)[7:])
+    img = img.crop((shift_x, shift_y, IMAGE_SHAPE-shift_x, IMAGE_SHAPE-shift_y))
+    img.save('./blur_del/static/media/ann_blr/' + key + str(file.img)[7:], quality=100)
 
-    # img.save(img_io, format='JPEG', quality=100)
     qqueryset = File.objects.filter(keysession=key, title=title)
     qqueryset.update(outputPath='/static/media/ann_blr/' + key + str(file.img)[7:])
 

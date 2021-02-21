@@ -14,23 +14,23 @@
     <div class="navpanel" style="margin-bottom: 2px;">
         <center class="container">
             <div class="row">
-                <div class="col-md-4 itemnav"><a href="#">HOME </a></div>
-                <div class="itemnav col-md-4"><a href="/api/">API </a></div>
-                <div class="itemnav col-md-4"><a href="/admin/">ADMIN </a></div>
-                <!-- <div class="itemnav"><a href="about.html">ABOUT US</a></div> -->
-            </div>
-        </center>
-    </div>
-    <div class="navpanel">
-        <center class="container">
-            <div class="row">
                 <div class="col-md-4 itemnav"><a href="/">HOME </a></div>
-                <div class="itemnav col-md-4"><a href="#">BlurNet </a></div>
-                <div class="itemnav col-md-4"><a href="/ann_carFill">CarRealFill </a></div>
+                <div class="itemnav col-md-4"><a href="/api/">API </a></div>
+<!--                <div class="itemnav col-md-4"><a href="/admin/">ADMIN </a></div>-->
                 <!-- <div class="itemnav"><a href="about.html">ABOUT US</a></div> -->
             </div>
         </center>
     </div>
+<!--    <div class="navpanel">-->
+<!--        <center class="container">-->
+<!--            <div class="row">-->
+<!--                <div class="col-md-4 itemnav"><a href="/">HOME </a></div>-->
+<!--                <div class="itemnav col-md-4"><a href="#">BlurNet </a></div>-->
+<!--                <div class="itemnav col-md-4"><a href="/ann_carFill">CarRealFill </a></div>-->
+<!--                &lt;!&ndash; <div class="itemnav"><a href="about.html">ABOUT US</a></div> &ndash;&gt;-->
+<!--            </div>-->
+<!--        </center>-->
+<!--    </div>-->
     
 </head>
 <body onload="init();">
@@ -38,18 +38,18 @@
             {% verbatim %}
             <div id="app">
                 <center><img src="static/source/pepeTolet.gif" width=40px> {{message}} <img src="static/source/pepeTolet.gif" width=40px></center>
-                <h1>О "BlurNet"</h1>
+                <h1>О "NoJpeg"</h1>
                 <div class="about row d-flex">
                     <div class="col-md-6 text-right justify-content-center align-self-center">
-                        BlurNet - это обученная на востановление размытого изображения нейронная сеть. 
-                        Она сможет восстановить размытое изображение и добавить к нему деталей.
+                        BlurNet - это обученная на востановление сжатого изображения, которое сохранили в плохом качестве формата JPEG.
+                        Она сможет восстановить изображение и добавить к нему деталей.
                         Особенность этой сети в том, что она обучена на изображениях природы, птиц и т.д. 
                         Таким образом нейронная сеть сможет понять как устроен тот или иной объект на фотографии и дополнить его иходя из прошлых изображений этого же объекта, например дорисовать иголке сосне.
 
                     </div>
                     <div class="col-md-1"></div>
                     <div class="col-md-5">
-                        <img src="static/source/img1_1.png" width="400px">
+                        <img src="static/source/img1_2.png" width="400px">
                     </div>
                     
                 </div>
@@ -65,9 +65,8 @@
                 <!-- На случай если у вас нет размытого изображения для тестирования нейронной сети, можно обработать любое загруженное изображение прям тут. -->
                 <div class="paneltool">
                     <div class="imageContainer row">
-                        <div class="col-md-1"></div>
-                        <div class="col-md-3 block">
-                            <center><b>Blured</b></center>
+                        <div class="col-md-4 block">
+                            <center><b>Сжатое изображение</b></center>
                             <!-- <img :src="base64Img.src" class="img" alt="" srcset="" width="256px"> -->
                             <div :style="imgDir" class="img"></div>
                             <input type="file" v-on:change="uploadImage">
@@ -89,12 +88,11 @@
                                 
                             </div>
                         </center>
-                        <div class="col-md-3">
-                            <center><b>Prediction</b></center>
+                        <div class="col-md-4">
+                            <center><b>Итоговое изображение</b></center>
                             <!-- <img :src="base64Img.src" class="img" alt="new_img" width="256px" :style="new_img">  -->
                             <div :style="new_img" class="img"></div>
                         </div>
-                        <div class="col-md-1"></div>
                     </div>
                 </div>
                 <hr>
